@@ -208,7 +208,7 @@ class FilesController extends Controller {
                 switch($file[0]->error) {
                     case UPLOAD_ERR_INI_SIZE:
                     case UPLOAD_ERR_FORM_SIZE:
-                        echo Json::encode(['error' => Yii::t('filemanager', 'File to large.')]);
+                        echo Json::encode(['error' => Yii::t('filemanager', 'File too large.')]);
                         break;
                     case UPLOAD_ERR_PARTIAL:
                     case UPLOAD_ERR_NO_FILE:
