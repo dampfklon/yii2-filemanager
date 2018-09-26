@@ -52,7 +52,7 @@ class FilesController extends Controller {
 
         // lazy loading
         if ($view == 'grid' && \Yii::$app->request->isAjax) {
-            echo Gallery::widget([
+            \Yii::$app->response->data = Gallery::widget([
                 'dataProvider' => $dataProvider,
                 'viewFrom' => 'full-page'
             ]);
@@ -102,7 +102,8 @@ class FilesController extends Controller {
                         $tagRelationshipModel = new $this->module->models['filesRelationship'];
                         $saveTags = $tagModel->saveTag($model->tags);
                         if (isset($saveTags['error'])) {
-                            echo Json::encode(['output' => '', 'message' => $saveTags['error']]);
+                            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                            \Yii::$app->response->data = Json::encode(['output' => '', 'message' => $saveTags['error']]);
                             return;
                         }
                         $tagRelationshipModel->saveRelationship($model->file_id, $saveTags);
@@ -118,13 +119,14 @@ class FilesController extends Controller {
                         }
                     }
                 }
-                echo $result;
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data =  $result;
             }
             return;
         }
 
         if (Yii::$app->request->post('uploadType')) {
-            echo $this->renderAjax('update', [
+            \Yii::$app->response->data = $this->renderAjax('update', [
                 'model' => $model,
                 'tags' => $tags,
                 'editableTagsLabel' => $editableTagsLabel,
@@ -176,7 +178,8 @@ class FilesController extends Controller {
         $model->delete();
 
         if (Yii::$app->request->isAjax) {
-            echo Json::encode(['status' => true]);
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->data = Json::encode(['status' => true]);
             \Yii::$app->end();
         }
         return $this->redirect(['index']);
@@ -192,7 +195,8 @@ class FilesController extends Controller {
 
         if (Yii::$app->request->isAjax) {
             if (!in_array(Yii::$app->request->post('uploadType'), [Filemanager::TYPE_FULL_PAGE, Filemanager::TYPE_MODAL])) {
-                echo Json::encode(['error' => Yii::t('filemanager', 'Invalid value: {variable}', ['variable' => 'uploadType'])]);
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data = Json::encode(['error' => Yii::t('filemanager', 'Invalid value: {variable}', ['variable' => 'uploadType'])]);
                 \Yii::$app->end();
             }
 
@@ -200,7 +204,28 @@ class FilesController extends Controller {
 
             $file = UploadedFile::getInstances($model, 'upload_file');
             if (!$file) {
-                echo Json::encode(['error' => Yii::t('filemanager', 'File not found.')]);
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data = Json::encode(['error' => Yii::t('filemanager', 'File not found.')]);
+                \Yii::$app->end();
+            }
+
+            if($file[0]->getHasError()) {
+                switch($file[0]->error) {
+                    case UPLOAD_ERR_INI_SIZE:
+                    case UPLOAD_ERR_FORM_SIZE:
+                        $error = Json::encode(['error' => Yii::t('filemanager', 'File to large.')]);
+                        break;
+                    case UPLOAD_ERR_PARTIAL:
+                    case UPLOAD_ERR_NO_FILE:
+                    case UPLOAD_ERR_NO_TMP_DIR:
+                    case UPLOAD_ERR_CANT_WRITE:
+                    case UPLOAD_ERR_EXTENSION:
+                    default:
+                        $error = Json::encode(['error' => Yii::t('filemanager', 'Upload fail due to some reasons.')]);
+                        break;
+                }
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data = $error;
                 \Yii::$app->end();
             }
 
@@ -208,7 +233,8 @@ class FilesController extends Controller {
             $folder = $folders::find()->select(['path', 'storage'])->where('folder_id=:folder_id', [':folder_id' => $model->folder_id])->one();
 
             if (!$folder) {
-                echo Json::encode(['error' => Yii::t('filemanager', 'Invalid folder location.')]);
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data =  Json::encode(['error' => Yii::t('filemanager', 'Invalid folder location.')]);
                 \Yii::$app->end();
             }
 
@@ -228,7 +254,8 @@ class FilesController extends Controller {
             // Too large size will cause memory exhausted issue when create thumbnail
             if (!is_null($model->dimension)) {
                 if (($width > 2272 || $height > 1704)) {
-                    echo Json::encode(['error' => Yii::t('filemanager', 'File dimension at most 2272 X 1704.')]);
+                    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                    \Yii::$app->response->data =  Json::encode(['error' => Yii::t('filemanager', 'File dimension at most 2272 X 1704.')]);
                     \Yii::$app->end();
                 }
             }
@@ -254,7 +281,8 @@ class FilesController extends Controller {
 
             if (!$uploadResult['status']) {
                 $transaction->rollBack();
-                echo Json::encode(['error' => $uploadResult['error_msg']]);
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data = Json::encode(['error' => $uploadResult['error_msg']]);
                 \Yii::$app->end();
             }
             $transaction->commit();
@@ -314,7 +342,7 @@ class FilesController extends Controller {
         ]);
 
         if ($ajaxRequest === true) {
-            echo $uploadView;
+            \Yii::$app->response->data = $uploadView;
             \Yii::$app->end();
         }
 
@@ -326,14 +354,14 @@ class FilesController extends Controller {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         if (Yii::$app->request->getQueryParam('page')) {
-            echo Gallery::widget([
+            \Yii::$app->response->data = Gallery::widget([
                 'dataProvider' => $dataProvider,
                 'viewFrom' => 'modal'
             ]);
             \Yii::$app->end();
         }
 
-        echo $this->renderAjax('_grid-view', [
+        \Yii::$app->response->data = $this->renderAjax('_grid-view', [
             'model' => $searchModel,
             'dataProvider' => $dataProvider,
             'uploadType' => Filemanager::TYPE_MODAL,
@@ -405,7 +433,9 @@ class FilesController extends Controller {
         foreach ($model->errors as $err) {
             $errors[] = $model->src_file_name . ': ' . $err[0];
         }
-        echo Json::encode(['error' => implode('<br>', $errors)]);
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        \Yii::$app->response->data =  Json::encode(['error' => implode('<br>', $errors)]);
         \Yii::$app->end();
     }
 
