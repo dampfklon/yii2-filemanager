@@ -17,7 +17,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'File to large.' => '',
+    'File too large.' => '',
     'Filename can only contain alphanumeric characters and dashes.' => '',
     'Url' => '',
     'host' => '',
