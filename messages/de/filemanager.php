@@ -41,7 +41,7 @@ return [
     'File Name' => 'Datei Name',
     'File dimension at most 2272 X 1704.' => 'Bildgröße höchstens 2272 X 1704.',
     'File not found.' => 'Datei nicht gefunden.',
-    'File to large.' => 'Datei zu groß.',
+    'File too large.' => 'Datei zu groß.',
     'Filename can only contain alphanumeric characters and dashes.' => 'Der Dateiname darf nur alphanumerische Zeichen und Bindestriche enthalten.',
     'Folder ID' => 'Ordner ID',
     'Invalid file extension. Available file extension are {ext}' => 'Ungültige Dateiendung. Verfügbare Dateierweiterung sind {ext}',
