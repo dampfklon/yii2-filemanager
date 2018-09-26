@@ -42,7 +42,7 @@ return [
     'File dimension at most 2272 X 1704.' => '',
     'File not found.' => '',
     'File too large.' => '',
-    'Filename can only contain alphanumeric characters and dashes.' => '',
+    'Filename can only contain alphanumeric characters, underscores and dashes.' => '',
     'Folder ID' => '',
     'Invalid file extension. Available file extension are {ext}' => '',
     'Invalid file type. Available file types are {types}' => '',
