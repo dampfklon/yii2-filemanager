@@ -18,7 +18,7 @@
  */
 return [
     'File too large.' => '',
-    'Filename can only contain alphanumeric characters and dashes.' => '',
+    'Filename can only contain alphanumeric characters, underscores and dashes.' => '',
     'Url' => '',
     'host' => '',
     'Advanced Search' => 'Búsqueda avanzada',
