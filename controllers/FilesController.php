@@ -213,7 +213,7 @@ class FilesController extends Controller {
                 switch($file[0]->error) {
                     case UPLOAD_ERR_INI_SIZE:
                     case UPLOAD_ERR_FORM_SIZE:
-                        $error = ['error' => Yii::t('filemanager', 'File to large.')];
+                        $error = ['error' => Yii::t('filemanager', 'File too large.')];
                         break;
                     case UPLOAD_ERR_PARTIAL:
                     case UPLOAD_ERR_NO_FILE:
@@ -226,24 +226,6 @@ class FilesController extends Controller {
                 }
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                 \Yii::$app->response->data = $error;
-                \Yii::$app->end();
-            }
-
-            if($file[0]->getHasError()) {
-                switch($file[0]->error) {
-                    case UPLOAD_ERR_INI_SIZE:
-                    case UPLOAD_ERR_FORM_SIZE:
-                        echo Json::encode(['error' => Yii::t('filemanager', 'File too large.')]);
-                        break;
-                    case UPLOAD_ERR_PARTIAL:
-                    case UPLOAD_ERR_NO_FILE:
-                    case UPLOAD_ERR_NO_TMP_DIR:
-                    case UPLOAD_ERR_CANT_WRITE:
-                    case UPLOAD_ERR_EXTENSION:
-                    default:
-                        echo Json::encode(['error' => Yii::t('filemanager', 'Upload fail due to some reasons.')]);
-                        break;
-                }
                 \Yii::$app->end();
             }
 
@@ -317,7 +299,6 @@ class FilesController extends Controller {
             } else {
                 return ['status' => 1, 'message' => 'Upload Success', 'type' => Yii::$app->request->post('uploadType')];
             }
-            return;
         }
 
         $multiple = false;
