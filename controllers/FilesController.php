@@ -103,19 +103,19 @@ class FilesController extends Controller {
                         $saveTags = $tagModel->saveTag($model->tags);
                         if (isset($saveTags['error'])) {
                             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                            \Yii::$app->response->data = Json::encode(['output' => '', 'message' => $saveTags['error']]);
+                            \Yii::$app->response->data = ['output' => '', 'message' => $saveTags['error']];
                             return;
                         }
                         $tagRelationshipModel->saveRelationship($model->file_id, $saveTags);
                         $editableTagsLabel = ArrayHelper::getColumn($filesRelationship::getTagIdArray($id), 'value');
-                        $result = Json::encode(['output' => implode(', ', $editableTagsLabel), 'message' => '']);
+                        $result = ['output' => implode(', ', $editableTagsLabel), 'message' => ''];
                     } else {
                         $model->$attribute = \yii\helpers\Html::encode($model->$attribute);
                         if ($model->update(true, [$attribute]) !== false) {
                             $model->touch('updated_at');
-                            $result = Json::encode(['output' => $model->$attribute, 'message' => '']);
+                            $result = ['output' => $model->$attribute, 'message' => ''];
                         } else {
-                            $result = Json::encode(['output' => $model->$attribute, 'message' => $model->errors[$attribute]]);
+                            $result = ['output' => $model->$attribute, 'message' => $model->errors[$attribute]];
                         }
                     }
                 }
@@ -179,7 +179,7 @@ class FilesController extends Controller {
 
         if (Yii::$app->request->isAjax) {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            \Yii::$app->response->data = Json::encode(['status' => true]);
+            \Yii::$app->response->data = ['status' => true];
             \Yii::$app->end();
         }
         return $this->redirect(['index']);
@@ -196,7 +196,7 @@ class FilesController extends Controller {
         if (Yii::$app->request->isAjax) {
             if (!in_array(Yii::$app->request->post('uploadType'), [Filemanager::TYPE_FULL_PAGE, Filemanager::TYPE_MODAL])) {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                \Yii::$app->response->data = Json::encode(['error' => Yii::t('filemanager', 'Invalid value: {variable}', ['variable' => 'uploadType'])]);
+                \Yii::$app->response->data = ['error' => Yii::t('filemanager', 'Invalid value: {variable}', ['variable' => 'uploadType'])];
                 \Yii::$app->end();
             }
 
@@ -205,7 +205,7 @@ class FilesController extends Controller {
             $file = UploadedFile::getInstances($model, 'upload_file');
             if (!$file) {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                \Yii::$app->response->data = Json::encode(['error' => Yii::t('filemanager', 'File not found.')]);
+                \Yii::$app->response->data = ['error' => Yii::t('filemanager', 'File not found.')];
                 \Yii::$app->end();
             }
 
@@ -213,7 +213,7 @@ class FilesController extends Controller {
                 switch($file[0]->error) {
                     case UPLOAD_ERR_INI_SIZE:
                     case UPLOAD_ERR_FORM_SIZE:
-                        $error = Json::encode(['error' => Yii::t('filemanager', 'File to large.')]);
+                        $error = ['error' => Yii::t('filemanager', 'File to large.')];
                         break;
                     case UPLOAD_ERR_PARTIAL:
                     case UPLOAD_ERR_NO_FILE:
@@ -221,7 +221,7 @@ class FilesController extends Controller {
                     case UPLOAD_ERR_CANT_WRITE:
                     case UPLOAD_ERR_EXTENSION:
                     default:
-                        $error = Json::encode(['error' => Yii::t('filemanager', 'Upload fail due to some reasons.')]);
+                        $error = ['error' => Yii::t('filemanager', 'Upload fail due to some reasons.')];
                         break;
                 }
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -234,7 +234,7 @@ class FilesController extends Controller {
 
             if (!$folder) {
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                \Yii::$app->response->data =  Json::encode(['error' => Yii::t('filemanager', 'Invalid folder location.')]);
+                \Yii::$app->response->data = ['error' => Yii::t('filemanager', 'Invalid folder location.')];
                 \Yii::$app->end();
             }
 
@@ -255,7 +255,7 @@ class FilesController extends Controller {
             if (!is_null($model->dimension)) {
                 if (($width > 2272 || $height > 1704)) {
                     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                    \Yii::$app->response->data =  Json::encode(['error' => Yii::t('filemanager', 'File dimension at most 2272 X 1704.')]);
+                    \Yii::$app->response->data = ['error' => Yii::t('filemanager', 'File dimension at most 2272 X 1704.')];
                     \Yii::$app->end();
                 }
             }
@@ -282,7 +282,7 @@ class FilesController extends Controller {
             if (!$uploadResult['status']) {
                 $transaction->rollBack();
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                \Yii::$app->response->data = Json::encode(['error' => $uploadResult['error_msg']]);
+                \Yii::$app->response->data = ['error' => $uploadResult['error_msg']];
                 \Yii::$app->end();
             }
             $transaction->commit();
@@ -435,7 +435,7 @@ class FilesController extends Controller {
         }
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        \Yii::$app->response->data =  Json::encode(['error' => implode('<br>', $errors)]);
+        \Yii::$app->response->data =  ['error' => implode('<br>', $errors)];
         \Yii::$app->end();
     }
 
